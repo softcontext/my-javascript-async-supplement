@@ -1,6 +1,183 @@
+## Promise
+
+
+
+```js
+const fetchSomething = () => new Promise((resolve) => {
+    setTimeout(() => resolve('future value'), 500);
+});
+
+const promiseFunc = () => new Promise((resolve) => {
+    fetchSomething().then(result => {
+        resolve(result + ' 2');
+    });
+});
+
+promiseFunc().then(result => console.log(result));
+// future value 2
+
+```
+
+
+
+```js
+const fetchSomething = () => new Promise((resolve) => {
+    setTimeout(() => resolve('future value'), 500);
+});
+
+async function asyncFunction() {
+    const result = await fetchSomething(); // returns promise
+
+    // waits for promise and uses promise result
+    return result + ' 2';
+}
+
+asyncFunction().then(result => console.log(result));
+
+/*
+    트랜스파일링을 한 후 .js 파일을 실행한다.
+ */
+
+```
+
+
+
+
+
+## Iterator
+
+
+
+```js
+let obj = {
+    array: [1, 2, 3],
+    nextIndex: 0,
+    next: function(){
+        return this.nextIndex < this.array.length ?
+        {value: this.array[this.nextIndex++], done: false} :
+        {value: undefined, done: true};
+    }
+};
+
+console.log(obj.next());
+console.log(obj.next());
+console.log(obj.next());
+console.log(obj.next());
+// { value: 1, done: false }
+// { value: 2, done: false }
+// { value: 3, done: false }
+// { value: undefined, done: true }
+
+```
+
+
+
+## Iterable
+
+
+
+```js
+let objX = {
+    array: [1, 2, 3],
+    nextIndex: 0,
+    [Symbol.iterator]: function(){
+        return {
+            array: this.array,
+            nextIndex: this.nextIndex,
+            next: function(){
+                return this.nextIndex < this.array.length ?
+                {value: this.array[this.nextIndex++], done: false} :
+                {value: undefined, done: true};
+            }
+        }
+    }
+};
+
+let iterable = objX[Symbol.iterator]();
+
+console.log(iterable.next());
+console.log(iterable.next());
+console.log(iterable.next());
+console.log(iterable.next());
+// { value: 1, done: false }
+// { value: 2, done: false }
+// { value: 3, done: false }
+// { value: undefined, done: true }
+
+```
+
+
+
+## Generator
+
+
+
+```js
+function* some(){
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+/*
+    Iterator 구현
+ */
+let generator = some();
+
+console.log(generator.next());
+console.log(generator.next());
+console.log(generator.next());
+console.log(generator.next());
+// { value: 1, done: false }
+// { value: 2, done: false }
+// { value: 3, done: false }
+// { value: undefined, done: true }
+
+console.log('----------------');
+
+generator = some();
+
+/*
+    Iterable 구현
+ */
+let iterable = generator[Symbol.iterator]();
+
+console.log(iterable.next());
+console.log(iterable.next());
+console.log(iterable.next());
+console.log(iterable.next());
+// { value: 1, done: false }
+// { value: 2, done: false }
+// { value: 3, done: false }
+// { value: undefined, done: true }
+
+console.log('---------------');
+
+/*
+    Array implements Iterable
+ */
+let array = [4, 5, 6];
+
+let iter = array[Symbol.iterator]();
+
+console.log(iter.next());
+console.log(iter.next());
+console.log(iter.next());
+console.log(iter.next());
+// { value: 4, done: false }
+// { value: 5, done: false }
+// { value: 6, done: false }
+// { value: undefined, done: true }
+
+```
+
+
+
+
+
+
+
 ## package.json
-
-
 
 ```js
 {
@@ -21,14 +198,9 @@
     "mz": "^2.7.0"
   }
 }
-
 ```
 
-
-
 ## Iterator
-
-
 
 ```js
 // 배열.values
@@ -62,8 +234,6 @@ for (let item of log) {
   console.log(`${item.message} @ ${item.timestamp}`)
 }
 ```
-
-
 
 ```js
 require("babel-polyfill");
@@ -101,14 +271,9 @@ log.add("third");
 for (let item of log) {
   console.log(`${item.message} @ ${item.timestamp}`)
 }
-
 ```
 
-
-
 ## Generator
-
-
 
 ```js
 // 제너레이터란 이터레이터를 사용해 자신의 실행을 제어하는 함수입니다.
@@ -137,8 +302,6 @@ for (let color of rainbow()) {
 }
 ```
 
-
-
 ```js
 // 호출자가 제너레이터의 처리 단계마다 정보를 전달하여 처리방식을 변경할 수 있습니다.
 function* interrogate(){
@@ -159,8 +322,6 @@ cycle = iter.next('blue');
 console.log(cycle.value);
 ```
 
-
-
 ```js
 // 제너레이터는 연산을 지연시켰다가 필요할 때만 수행하게 만들 수 있습니다.
 function* abc(){
@@ -178,14 +339,9 @@ const iter = abc();
 console.log(iter.next());
 console.log(iter.next());
 console.log(iter.next());
-
 ```
 
-
-
 ## Async
-
-
 
 ```js
 const fs = require('fs');
@@ -239,10 +395,7 @@ function* theFutureIsNow(){
 }
 
 grun(theFutureIsNow);
-
 ```
-
-
 
 ```js
 const fs = require('fs');
@@ -294,10 +447,7 @@ function* theFutureIsNow(){
 }
 
 grun(theFutureIsNow);
-
 ```
-
-
 
 ```js
 const fs = require('fs');
@@ -362,10 +512,7 @@ function* theFutureIsNow(){
 }
 
 grun(theFutureIsNow);
-
 ```
-
-
 
 ```js
 // const fs = require('fs');
@@ -437,14 +584,9 @@ async function theFutureIsNow() {
 }
 
 theFutureIsNow();
-
 ```
 
-
-
 ## Async 10 min
-
-
 
 ```js
 // Async - declares an asynchronous function (async function someName(){...}).
@@ -515,11 +657,8 @@ promise.then((data) => {
 // It's pretty clear that the Async/Await version of the code is much shorter
 // and easier to read.
 // Both functions are completely identical -
-// they both return Promises and resolve with the JSON response from axios. 
-
+// they both return Promises and resolve with the JSON response from axios.
 ```
-
-
 
 ```js
 // So, does Async/Await make promises obsolete?
@@ -569,10 +708,7 @@ promise.then((data) => {
 // Instead of a sum of the times,
 // we will effectively reduce the execution
 // to the time of the slowest request (getValueB - 4 seconds).
-
 ```
-
-
 
 ```js
 // Handling Errors in Async/Await
@@ -609,7 +745,6 @@ doSomethingAsync().then(successHandler).catch(errorHandler);
 
 // It's important to choose which method of error handling you prefer and stick to it.
 // Using both try/catch and .catch() at the same time will most probably lead to problems.
-
 ```
 
 
